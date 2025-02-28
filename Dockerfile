@@ -1,15 +1,19 @@
 # Use the official IPRoyal image (Alpine-based)
 FROM iproyal/pawns-cli:latest
 
-# Switch to root user
-USER root
+# 1. Switch to root using UID (0)
+USER 0
 
-# Install Busybox HTTP server using Alpine's package manager (apk)
-RUN apk update && apk add --no-cache busybox
+# 2. Install core system files first
+RUN apk update && apk add --no-cache shadow busybox
 
-# Copy the startup script
+# 3. Create required user/group entries
+RUN echo "root:x:0:0:root:/root:/bin/sh" > /etc/passwd && \
+    echo "root:x:0:root" > /etc/group
+
+# 4. Copy the startup script
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
-# Run as root
+# 5. Run as root
 CMD ["/start.sh"]
