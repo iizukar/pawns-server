@@ -1,14 +1,15 @@
-# Start from the official IPRoyal image
+# Use the official IPRoyal image (Alpine-based)
 FROM iproyal/pawns-cli:latest
 
+# Switch to root user
 USER root
 
-# Install Busybox (tiny HTTP server)
-RUN apt-get update && apt-get install -y busybox
+# Install Busybox HTTP server using Alpine's package manager (apk)
+RUN apk update && apk add --no-cache busybox
 
 # Copy the startup script
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
-# Run both Pawns and the HTTP server
+# Run as root
 CMD ["/start.sh"]
